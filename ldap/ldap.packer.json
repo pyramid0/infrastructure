@@ -1,0 +1,48 @@
+{
+	...
+
+	"provisioners": [
+		{
+			"type": "shell",
+			"inline": [
+				"sudo mkdir -p /etc/chef && sudo chown -R root:root /etc/chef",
+				"sudo mkdir -p /tmp/packer-chef-client && sudo chown -R root:root /tmp/packer-chef-client"
+			]
+		},
+
+		{
+			"type": "file",
+			"source": "{{pwd}}/cookbooks",
+			"destination": "/etc/chef/cookbooks"
+		},
+
+		{
+			"type": "file",
+			"source": "{{pwd}}/data_bags",
+			"destination": "/etc/chef/databags"
+		},
+
+		{
+			"type": "file",
+			"source": "{{pwd}}/environments",
+			"destination": "/etc/chef/environments"
+		},
+
+		{
+			"type": "file",
+			"source": "{{pwd}}/encrypted_data_bag_secret",
+			"destination": "/etc/chef/encrypted_data_bag_secret"
+		},
+
+		{
+			"type": "chef-client",
+			"execute_command": "cd /etc/chef && sudo chef-client --local-mode --no-color -c /tmp/packer-chef-client/client.rb -j /tmp/packer-chef-client/first-boot.json",
+			"chef_environment": "packer",
+			"server_url": "http://localhost:8889",
+			"skip_clean_node": "true",
+			"run_list": [
+				"..."
+			]
+		}
+	]
+}
